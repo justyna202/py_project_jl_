@@ -249,4 +249,51 @@ class AplikacjaWeterynaryjna:
                 zwierzeta.append(dane)
                 self.pokaz_liste("zwierzeta")
 
+    def edytuj(self) -> None:
+        element = self.pobierz_zaznaczony()
+        if not element:
+            return
+
+        if self.wybrany_typ in ["firmy"]:
+            dane = self.formularz("Edytuj firmę", ["nazwa", "miejscowosc", "ulica"], element)
+            if dane:
+                stara_nazwa = element["nazwa"]
+                dane["lat"], dane["lon"] = pobierz_wspolrzedne(dane["miejscowosc"], dane["ulica"])
+                element.update(dane)
+                for klient in klienci:
+                    if klient["firma"] == stara_nazwa:
+                        klient["firma"] = dane["nazwa"]
+                for pracownik in pracownicy:
+                    if pracownik["firma"] == stara_nazwa:
+                        pracownik["firma"] = dane["nazwa"]
+                self.pokaz_liste("firmy")
+
+        elif self.wybrany_typ in ["klienci", "klienci_firmy"]:
+            dane = self.formularz("Edytuj klienta", ["imie_nazwisko", "firma", "miejscowosc", "ulica"], element)
+            if dane:
+                stare_imie = element["imie_nazwisko"]
+                dane["lat"], dane["lon"] = pobierz_wspolrzedne(dane["miejscowosc"], dane["ulica"])
+                element.update(dane)
+                for zwierze in zwierzeta:
+                    if zwierze["wlasciciel"] == stare_imie:
+                        zwierze["wlasciciel"] = dane["imie_nazwisko"]
+                self.pokaz_liste("klienci")
+
+        elif self.wybrany_typ in ["pracownicy", "pracownicy_firmy"]:
+            dane = self.formularz("Edytuj pracownika", ["imie_nazwisko", "firma", "stanowisko", "miejscowosc", "ulica"], element)
+            if dane:
+                stare_imie = element["imie_nazwisko"]
+                dane["lat"], dane["lon"] = pobierz_wspolrzedne(dane["miejscowosc"], dane["ulica"])
+                element.update(dane)
+                for zwierze in zwierzeta:
+                    if zwierze["pracownik"] == stare_imie:
+                        zwierze["pracownik"] = dane["imie_nazwisko"]
+                self.pokaz_liste("pracownicy")
+
+        else:
+            dane = self.formularz("Edytuj zwierzę", ["nazwa", "gatunek", "wlasciciel", "pracownik"], element)
+            if dane:
+                element.update(dane)
+                self.pokaz_liste("zwierzeta")
+
 
