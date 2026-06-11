@@ -116,4 +116,82 @@ class AplikacjaWeterynaryjna:
         self.mapa.set_position(52.0, 19.0)
         self.mapa.set_zoom(6)
 
+        self.pokaz_liste("firmy")
+
+    def pokaz_liste(self, typ: str) -> None:
+        self.wybrany_typ = typ
+
+        if typ == "firmy":
+            self.aktualna_lista = firmy
+            self.tytul_listy.config(text="Firmy")
+            opisy = [opis_firmy(firma) for firma in firmy]
+        elif typ == "klienci":
+            self.aktualna_lista = klienci
+            self.tytul_listy.config(text="Klienci")
+            opisy = [opis_klienta(klient) for klient in klienci]
+        elif typ == "pracownicy":
+            self.aktualna_lista = pracownicy
+            self.tytul_listy.config(text="Pracownicy")
+            opisy = [opis_pracownika(pracownik) for pracownik in pracownicy]
+        else:
+            self.aktualna_lista = zwierzeta
+            self.tytul_listy.config(text="Zwierzęta")
+            opisy = [opis_zwierzecia(zwierze) for zwierze in zwierzeta]
+
+        self.uzupelnij_liste(opisy)
+        self.odswiez_mape()
+
+    def uzupelnij_liste(self, opisy: list[str]) -> None:
+        self.lista.delete(0, tk.END)
+        for opis in opisy:
+            self.lista.insert(tk.END, opis)
+
+    def po_wybraniu_elementu(self, event=None) -> None:
+        indeksy = self.lista.curselection()
+        if not indeksy:
+            return
+
+        element = self.aktualna_lista[indeksy[0]]
+
+        if "nazwa" in element:
+            self.wybrana_firma = element["nazwa"]
+        if "stanowisko" in element:
+            self.wybrany_pracownik = element["imie_nazwisko"]
+
+    def pokaz_klientow_wybranej_firmy(self) -> None:
+        if not self.wybrana_firma:
+            return
+        lista = klienci_firmy(klienci, self.wybrana_firma)
+        self.wybrany_typ = "klienci_firmy"
+        self.aktualna_lista = lista
+        self.tytul_listy.config(text=f"Klienci firmy: {self.wybrana_firma}")
+        self.uzupelnij_liste([opis_klienta(klient) for klient in lista])
+        self.odswiez_mape(lista)
+
+    def pokaz_pracownikow_wybranej_firmy(self) -> None:
+        if not self.wybrana_firma:
+            return
+        lista = pracownicy_firmy(pracownicy, self.wybrana_firma)
+        self.wybrany_typ = "pracownicy_firmy"
+        self.aktualna_lista = lista
+        self.tytul_listy.config(text=f"Pracownicy firmy: {self.wybrana_firma}")
+        self.uzupelnij_liste([opis_pracownika(pracownik) for pracownik in lista])
+        self.odswiez_mape(lista)
+
+    def pokaz_zwierzeta_wybranego_pracownika(self) -> None:
+        if not self.wybrany_pracownik:
+            return
+        lista = zwierzeta_pracownika(zwierzeta, self.wybrany_pracownik)
+        self.wybrany_typ = "zwierzeta_pracownika"
+        self.aktualna_lista = lista
+        self.tytul_listy.config(text=f"Zwierzęta pracownika: {self.wybrany_pracownik}")
+        self.uzupelnij_liste([opis_zwierzecia(zwierze) for zwierze in lista])
+        self.odswiez_mape()
+
+    def pobierz_zaznaczony(self):
+        indeksy = self.lista.curselection()
+        if not indeksy:
+            return None
+        return self.aktualna_lista[indeksy[0]]
+
 
