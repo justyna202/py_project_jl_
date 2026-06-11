@@ -64,4 +64,24 @@ def pobierz_wspolrzedne(miejscowosc: str, ulica: str = "") -> tuple[float | None
 
     return None, None
 
+def opis_firmy(firma: dict) -> str:
+    return f"{firma['nazwa']} | {firma['miejscowosc']}, {firma['ulica']}"
+
+def opis_klienta(klient: dict) -> str:
+    return f"{klient['imie_nazwisko']} | firma: {klient['firma']} | {klient['miejscowosc']}, {klient['ulica']}"
+
+def opis_pracownika(pracownik: dict) -> str:
+    return f"{pracownik['imie_nazwisko']} | {pracownik['stanowisko']} | firma: {pracownik['firma']} | {pracownik['miejscowosc']}, {pracownik['ulica']}"
+
+def opis_zwierzecia(zwierze: dict) -> str:
+    return f"{zwierze['nazwa']} | {zwierze['gatunek']} | właściciel: {zwierze['wlasciciel']} | opiekun: {zwierze['pracownik']}"
+
+def klienci_firmy(klienci: list, nazwa_firmy: str) -> list:
+    return [klient for klient in klienci if klient["firma"] == nazwa_firmy]
+
+def pracownicy_firmy(pracownicy: list, nazwa_firmy: str) -> list:
+    return [pracownik for pracownik in pracownicy if pracownik["firma"] == nazwa_firmy]
+
+def zwierzeta_pracownika(zwierzeta: list, imie_nazwisko_pracownika: str) -> list:
+    return [zwierze for zwierze in zwierzeta if zwierze["pracownik"] == imie_nazwisko_pracownika]
 
