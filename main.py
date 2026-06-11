@@ -296,4 +296,41 @@ class AplikacjaWeterynaryjna:
                 element.update(dane)
                 self.pokaz_liste("zwierzeta")
 
+    def usun(self) -> None:
+        element = self.pobierz_zaznaczony()
+        if not element:
+            return
+
+        if self.wybrany_typ == "firmy":
+            firmy.remove(element)
+            self.pokaz_liste("firmy")
+        elif self.wybrany_typ in ["klienci", "klienci_firmy"]:
+            klienci.remove(element)
+            self.pokaz_liste("klienci")
+        elif self.wybrany_typ in ["pracownicy", "pracownicy_firmy"]:
+            pracownicy.remove(element)
+            self.pokaz_liste("pracownicy")
+        else:
+            zwierzeta.remove(element)
+            self.pokaz_liste("zwierzeta")
+
+    def odswiez_mape(self, lista_punktow: list | None = None) -> None:
+        self.mapa.delete_all_marker()
+        punkty = lista_punktow if lista_punktow is not None else firmy + klienci + pracownicy
+
+        for punkt in punkty:
+            if punkt.get("lat") is not None and punkt.get("lon") is not None:
+                nazwa = punkt.get("nazwa") or punkt.get("imie_nazwisko") or "punkt"
+                adres = f"{punkt.get('miejscowosc', '')}, {punkt.get('ulica', '')}"
+                self.mapa.set_marker(punkt["lat"], punkt["lon"], text=f"{nazwa}\n{adres}")
+
+        if punkty:
+            pierwszy = next((p for p in punkty if p.get("lat") is not None and p.get("lon") is not None), None)
+            if pierwszy:
+                self.mapa.set_position(pierwszy["lat"], pierwszy["lon"])
+
+
+if __name__ == "__main__":
+    AplikacjaWeterynaryjna()
+
 
