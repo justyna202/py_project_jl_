@@ -195,3 +195,58 @@ class AplikacjaWeterynaryjna:
         return self.aktualna_lista[indeksy[0]]
 
 
+    def formularz(self, tytul: str, pola: list[str], dane: dict | None = None) -> dict | None:
+        okno = tk.Toplevel(self.root)
+        okno.geometry("420x360")
+        okno.grab_set()
+
+        wpisy = {}
+        for i, pole in enumerate(pola):
+            tk.Label(okno, text=pole).grid(row=i, column=0, sticky="e", padx=10, pady=7)
+            entry = tk.Entry(okno, width=32)
+            entry.grid(row=i, column=1, padx=10, pady=7)
+            if dane and pole in dane:
+                entry.insert(0, dane[pole])
+            wpisy[pole] = entry
+
+        wynik = {"dane": None}
+
+        def zapisz():
+            wynik["dane"] = {pole: wpisy[pole].get().strip() for pole in pola}
+            okno.destroy()
+
+        tk.Button(okno, text="Zapisz", width=14, command=zapisz).grid(row=len(pola), column=0, columnspan=2, pady=18)
+        self.root.wait_window(okno)
+        return wynik["dane"]
+
+    def dodaj(self) -> None:
+        if self.wybrany_typ in ["firmy"]:
+            dane = self.formularz("Dodaj firmę", ["nazwa", "miejscowosc", "ulica"])
+            if dane:
+                dane["lat"], dane["lon"] = pobierz_wspolrzedne(dane["miejscowosc"], dane["ulica"])
+                firmy.append(dane)
+                self.pokaz_liste("firmy")
+
+        elif self.wybrany_typ in ["klienci", "klienci_firmy"]:
+            start = {"firma": self.wybrana_firma} if self.wybrana_firma else None
+            dane = self.formularz("Dodaj klienta", ["imie_nazwisko", "firma", "miejscowosc", "ulica"], start)
+            if dane:
+                dane["lat"], dane["lon"] = pobierz_wspolrzedne(dane["miejscowosc"], dane["ulica"])
+                klienci.append(dane)
+                self.pokaz_liste("klienci")
+
+        elif self.wybrany_typ in ["pracownicy", "pracownicy_firmy"]:
+            start = {"firma": self.wybrana_firma} if self.wybrana_firma else None
+            dane = self.formularz("Dodaj pracownika", ["imie_nazwisko", "firma", "stanowisko", "miejscowosc", "ulica"], start)
+            if dane:
+                dane["lat"], dane["lon"] = pobierz_wspolrzedne(dane["miejscowosc"], dane["ulica"])
+                pracownicy.append(dane)
+                self.pokaz_liste("pracownicy")
+
+        else:
+            dane = self.formularz("Dodaj zwierzę", ["nazwa", "gatunek", "wlasciciel", "pracownik"])
+            if dane:
+                zwierzeta.append(dane)
+                self.pokaz_liste("zwierzeta")
+
+
