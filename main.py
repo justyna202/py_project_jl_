@@ -322,7 +322,7 @@ class AplikacjaWeterynaryjna:
             if punkt.get("lat") is not None and punkt.get("lon") is not None:
                 nazwa = punkt.get("nazwa") or punkt.get("imie_nazwisko") or "punkt"
                 adres = f"{punkt.get('miejscowosc', '')}, {punkt.get('ulica', '')}"
-                self.mapa.set_marker(punkt["lat"], punkt["lon"], text=f"{nazwa}\n{adres}")
+                self.mapa.set_marker(punkt["lat"], punkt["lon"], text=f"{nazwa}")
 
         if punkty:
             pierwszy = next((p for p in punkty if p.get("lat") is not None and p.get("lon") is not None), None)
