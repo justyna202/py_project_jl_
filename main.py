@@ -72,7 +72,7 @@ class AplikacjaWeterynaryjna:
         menu = tk.Frame(self.root, padx=10, pady=10)
         menu.grid(row=0, column=0, sticky="ns")
 
-        tk.Label(menu, text="Menu", font=("Arial", 13, "bold")).grid(row=0, column=0, columnspan=2, pady=5)
+        tk.Label(menu, text="Menu", font=("Times New Roma", 13, "bold")).grid(row=0, column=0, columnspan=2, pady=5)
 
         lewa_kolumna = [
             ("Firmy", lambda: self.pokaz_liste("firmy")),
